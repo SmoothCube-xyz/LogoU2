@@ -10,18 +10,6 @@
             text-align: center;
             margin-top: 50px;
         }
-        button {
-            background-color: #f44336;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        button:hover {
-            background-color: #d32f2f;
-        }
         iframe {
             display: none; /* Hide iframes to avoid clutter */
         }
@@ -44,8 +32,7 @@
 </head>
 <body>
     <h1>Mass Logout Tool</h1>
-    <p>Click the button below to log out of all supported services.</p>
-    <button id="logoutButton">Log Me Out</button>
+    <p>The logout process is starting...</p>
     <div id="iframes"></div>
     <ul id="statusList"></ul>
 
@@ -113,7 +100,8 @@
             { name: "Expedia", url: "https://www.expedia.com/logout" }
         ];
 
-        document.getElementById("logoutButton").addEventListener("click", () => {
+        // Function to initiate logout
+        function massLogout() {
             const iframeContainer = document.getElementById("iframes");
             const statusList = document.getElementById("statusList");
             iframeContainer.innerHTML = ""; // Clear existing iframes
@@ -140,7 +128,11 @@
                     }
                 }, 2000);
             });
-        });
+        }
+
+        // Trigger the logout process when the page loads
+        window.onload = massLogout;
     </script>
 </body>
 </html>
+
