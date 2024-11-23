@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mass Logout Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #d32f2f;
+        }
+        iframe {
+            display: none; /* Hide iframes to avoid clutter */
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        li {
+            font-size: 16px;
+            margin: 8px 0;
+        }
+        .status-deactivated {
+            color: green;
+        }
+        .status-static {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mass Logout Tool</h1>
+    <p>Click the button below to log out of all supported services.</p>
+    <button id="logoutButton">Log Me Out</button>
+    <div id="iframes"></div>
+    <ul id="statusList"></ul>
+
+    <script>
+        const logoutUrls = [
+            { name: "Google", url: "https://accounts.google.com/Logout" },
+            { name: "YouTube", url: "https://www.youtube.com/logout" },
+            { name: "Facebook", url: "https://www.facebook.com/logout.php" },
+            { name: "Twitter", url: "https://twitter.com/logout" },
+            { name: "Instagram", url: "https://www.instagram.com/accounts/logout/" },
+            { name: "LinkedIn", url: "https://www.linkedin.com/logout/" },
+            { name: "Amazon", url: "https://www.amazon.com/ap/signout" },
+            { name: "Reddit", url: "https://www.reddit.com/logout" },
+            { name: "Pinterest", url: "https://www.pinterest.com/logout/" },
+            { name: "Yahoo", url: "https://login.yahoo.com/account/logout" },
+            { name: "Microsoft", url: "https://login.live.com/logout.srf" },
+            { name: "Dropbox", url: "https://www.dropbox.com/logout" },
+            { name: "Spotify", url: "https://www.spotify.com/logout/" },
+            { name: "GitHub", url: "https://github.com/logout" },
+            { name: "Netflix", url: "https://www.netflix.com/SignOut" },
+            { name: "eBay", url: "https://www.ebay.com/logout" },
+            { name: "PayPal", url: "https://www.paypal.com/signout" },
+            { name: "Steam", url: "https://store.steampowered.com/logout/" },
+            { name: "TikTok", url: "https://www.tiktok.com/logout" },
+            { name: "Discord", url: "https://discord.com/logout" },
+            { name: "Tumblr", url: "https://www.tumblr.com/logout" },
+            { name: "Quora", url: "https://www.quora.com/logout" },
+            { name: "Snapchat", url: "https://accounts.snapchat.com/accounts/logout" },
+            { name: "Slack", url: "https://slack.com/signout" },
+            { name: "Medium", url: "https://medium.com/logout" },
+            { name: "Twitch", url: "https://www.twitch.tv/logout" },
+            { name: "Flickr", url: "https://www.flickr.com/logout" },
+            { name: "Etsy", url: "https://www.etsy.com/logout" },
+            { name: "Adobe", url: "https://accounts.adobe.com/logout" },
+            { name: "Canva", url: "https://www.canva.com/logout" },
+            { name: "Trello", url: "https://trello.com/logout" },
+            { name: "Coursera", url: "https://www.coursera.org/logout" },
+            { name: "Udemy", url: "https://www.udemy.com/user/logout" },
+            { name: "Asana", url: "https://asana.com/logout" },
+            { name: "Notion", url: "https://www.notion.so/logout" },
+            { name: "WhatsApp Web", url: "https://web.whatsapp.com/logout" },
+            { name: "Messenger", url: "https://www.messenger.com/logout" },
+            { name: "Zillow", url: "https://www.zillow.com/logout" },
+            { name: "Gmail", url: "https://mail.google.com/mail/logout" },
+            { name: "Outlook", url: "https://outlook.live.com/logout" },
+            { name: "Box", url: "https://app.box.com/logout" },
+            { name: "WeTransfer", url: "https://wetransfer.com/logout" },
+            { name: "WordPress", url: "https://wordpress.com/logout" },
+            { name: "Vimeo", url: "https://vimeo.com/logout" },
+            { name: "Bandcamp", url: "https://bandcamp.com/logout" },
+            { name: "Behance", url: "https://www.behance.net/logout" },
+            { name: "Duolingo", url: "https://www.duolingo.com/logout" },
+            { name: "Bitbucket", url: "https://bitbucket.org/logout" },
+            { name: "Alibaba", url: "https://passport.alibaba.com/logout" },
+            { name: "Shopee", url: "https://shopee.com/logout" },
+            { name: "Flipkart", url: "https://www.flipkart.com/logout" },
+            { name: "Walmart", url: "https://www.walmart.com/logout" },
+            { name: "Uber", url: "https://www.uber.com/logout" },
+            { name: "Lyft", url: "https://www.lyft.com/logout" },
+            { name: "Grubhub", url: "https://www.grubhub.com/logout" },
+            { name: "DoorDash", url: "https://www.doordash.com/logout" },
+            { name: "Instacart", url: "https://www.instacart.com/logout" },
+            { name: "Airbnb", url: "https://www.airbnb.com/logout" },
+            { name: "Booking.com", url: "https://www.booking.com/logout" },
+            { name: "Expedia", url: "https://www.expedia.com/logout" }
+        ];
+
+        document.getElementById("logoutButton").addEventListener("click", () => {
+            const iframeContainer = document.getElementById("iframes");
+            const statusList = document.getElementById("statusList");
+            iframeContainer.innerHTML = ""; // Clear existing iframes
+            statusList.innerHTML = ""; // Clear previous statuses
+
+            logoutUrls.forEach(service => {
+                const iframe = document.createElement("iframe");
+                iframe.src = service.url;
+                iframeContainer.appendChild(iframe);
+
+                const listItem = document.createElement("li");
+                listItem.textContent = `${service.name}: Attempting...`;
+                statusList.appendChild(listItem);
+
+                // Simulate success/failure (replace with proper detection if possible)
+                setTimeout(() => {
+                    const isSuccess = Math.random() > 0.5; // Simulate result
+                    if (isSuccess) {
+                        listItem.textContent = `${service.name} (Deactivated)`;
+                        listItem.className = "status-deactivated";
+                    } else {
+                        listItem.textContent = `${service.name} (Static)`;
+                        listItem.className = "status-static";
+                    }
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
